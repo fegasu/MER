@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Diseño Base de Datos</title>
+        <meta content="Actividad de afianzamiento SENA" name="description"/>
+        <meta content="width=device-width" name="viewport"/>
+        <link href="http://twitter.github.com/bootstrap/assets/css/bootstrap.css" rel="stylesheet"/>
+        <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/cupertino/jquery-ui.css" rel="stylesheet" type="text/css"/> 
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.js"></script>
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.js"></script>
+        <script type="text/javascript">
+            Array.prototype.shuffle = function() {
+                for ( var i = this.length-1; i > 0; i-- ) {
+                    var j = Math.floor( i * Math.random() );
+                    var tmp = this[ j ];
+                    this[ j ] = this[ i ];
+                    this[ i ] = tmp;
+                }
+                return this;
+            }
+	
+            var aTerminosS = new Array();
+            var aDefinicionesS = new Array();
+            var aTerminos = new Array();
+            var aDefiniciones = new Array();
+            var timeOut;
+            aTerminosS.push("MODELO ER");
+            aTerminosS.push("CLAVE FORÁNEA");
+            aTerminosS.push("ATRIBUTOS");
+            aTerminosS.push("DISEÑO FÍSICO");
+            aTerminosS.push("ENTIDAD");
+            aTerminosS.push("SQL");
+            aTerminosS.push("GRADO");
+            aTerminosS.push("ASIGNACIÓN");
+            aTerminosS.push("CONECTIVIDAD");
+            aTerminosS.push("MODELO RELACIONAL");
+            aTerminosS.push("DISEÑO");
+            aTerminosS.push("INTERRELACIONES");
+            aDefinicionesS.push("Modelo cuyos principales elementos son las entidades y las relaciones.");
+            aDefinicionesS.push("Identifica una columna o grupo de columnas en una tabla que se refiere a una columna o grupo de columnas en otra tabla.");
+            aDefinicionesS.push("Propiedades de los objetos");
+            aDefinicionesS.push("Etapa que transforma la estructura obtenida en la etapa del diseño lógico con el objetivo de conseguir una mayor eficiencia y que, además, la completa con aspectos de implementación física que dependerán del SMBD que se debe utilizar.");
+            aDefinicionesS.push("Objeto del mundo real que podemos distinguir del resto de los objetos y del cual nos interesan algunas propiedades.");
+            aDefinicionesS.push("Lenguaje de Consulta Estructurado.");
+            aDefinicionesS.push("Número de entidades que asocia la interrelación");
+            aDefinicionesS.push("Se asocian las entidades o tipo de entidades a tablas de base de datos");
+            aDefinicionesS.push("Expresa el tipo de correspondencia que se establece entre las ocurrencias de entidades asociadas con la interrelación");
+            aDefinicionesS.push("Modelo de datos basado en el uso de relaciones.");
+            aDefinicionesS.push("En forma general, se considera una estrategia de alto nivel para resolver problemas  y construir soluciones.");
+            aDefinicionesS.push("Asociaciones entre entidades");
+	
+            var option1 = null;
+            var option2 = null;
+            var cantOk = 0;
+            function buscarPosicion(type, find){
+                var posicion = false;
+                var i = 0;
+                if(type == 1){
+                    for(i = 0; i < aTerminosS.length; i++){
+                        if(aTerminosS[i] == find)
+                            return i;
+                    }
+                }else if(type == 2){
+                    for(i = 0; i < aDefinicionesS.length; i++){
+                        if(aDefinicionesS[i] == find)
+                            return i;
+                    }
+                }else if(type == 3){
+                    for(i = 0; i < aDefiniciones.length; i++){
+                        if(aDefiniciones[i] == find)
+                            return i;
+                    }
+                }
+                return posicion;
+            }
+	
+            function clearErrors(){
+                option1.removeClass("ui-state-error");
+                option2.removeClass("ui-state-error");
+                hide(option1);
+                hide(option2);
+                $("#detalles").hide(500);
+                option1 = null;
+                option2 = null;
+                timeOut = null;
+            }
+	
+            function verificar(){
+                var def = option1.find("span").html();
+                var p = option2.find("span").html()*1;
+                var def2 = aDefiniciones[p - 1];
+                var pos1 = buscarPosicion(1, def);
+                var pos2 = buscarPosicion(2, def2);
+                if(pos1 === false){
+                    alert("Ocurrio un error en el sistema, no se encontró la posición.");
+                    return;
+                }
+                if(pos2 === false){
+                    alert("Ocurrio un error en el sistema, no se encontró la posición.");
+                    return;
+                }
+                if(pos1 == pos2){
+                    option1.attr("finish", 1).addClass("ui-state-highlight");
+                    option2.attr("finish", 1).addClass("ui-state-highlight");
+                    cantOk++;
+                    if(cantOk == 1)
+                        $("#tbody-relacion").html("");
+                    var html = "<tr><td style='width: 30%;'>"+def+"</td><td style='font-size: 12px;'><b>"+p+"</b>: "+def2+"</td></tr>";
+                    $("#tbody-relacion").append(html);
+                    $("#cantOk").html(cantOk);
+                    if(cantOk == aTerminosS.length){
+                        $("#detalles").addClass("borderMore").html("Felicitaciones !!!<br/>Finalizó correctamente esta actividad.").show(500);
+                    }
+                    option1 = null;
+                    option2 = null;
+                }else{
+                    option1.addClass("ui-state-error");
+                    option2.addClass("ui-state-error");
+                    timeOut = setTimeout("clearErrors()", 2500);
+                }
+            }
+	
+            function show(cont, callback){
+                if(typeof callback == "function")
+                    cont.find("span").show(500, callback);
+                else
+                    cont.find("span").show(500);
+                cont.addClass("ui-state-active");
+                cont.attr("is_active", 1);
+            }
+            function hide(cont){
+                cont.find("span").hide(500);
+                cont.removeClass("ui-state-active");
+                cont.attr("is_active", 0);
+            }
+	
+            function clickeoOption(){
+                $refer = $(this);
+                if($refer.attr("finish") == 1)
+                    return false;
+                if($refer.hasClass("bloque1")){
+                    if(option1 !== null && $refer.html() == option1.html())
+                        return false;
+                    if(option2 !== null){
+                        if(option1 == null){
+                            option1 = $refer;
+                            show(option1, verificar);
+                        }
+                    }else{
+                        if(option1 !== null)
+                            hide(option1);
+                        option1 = $refer;
+                        show(option1);
+                    }
+                }else if($refer.hasClass("bloque2")){
+                    if(option2 !== null && $refer.html() == option2.html())
+                        return false;
+                    var ii = $refer.find("span").html()*1;
+                    $("#detalles").hide(200).html("<b>"+ii+": </b>"+aDefiniciones[ii - 1]).show(100);
+                    if(option1 !== null){
+                        if(option2 == null){
+                            option2 = $refer;
+                            show(option2, verificar);
+                        }
+                    }else{
+                        if(option2 !== null)
+                            hide(option2);
+                        option2 = $refer;
+                        show(option2);
+                    }
+                }
+                return false;
+            }
+            function verSolucion(){
+                clearTimeout(timeOut);
+                if(option1 !== null)
+                    option1.removeClass("ui-state-error");
+                if(option2 !== null)
+                    option2.removeClass("ui-state-error");
+                $("#detalles").hide();
+                option1 = null;
+                option2 = null;
+                var $options = $(".option");
+                $options.find("span").show(500);
+                if(cantOk == 0)
+                    $("#tbody-relacion").html("");
+                var html = "";
+                var $options1 = $(".bloque1");
+                for(var i = 0; i < $options1.length; i++){
+                    if($($options[i]).attr("finish") == 1)
+                        continue;
+                    var def = $($options[i]).find("span").html();
+                    var pos1 = buscarPosicion(1, def);
+                    var def2 = aDefinicionesS[pos1];
+                    var pos2 = buscarPosicion(3, def2);
+                    html = "<tr><td style='width: 30%;'>"+def+"</td><td style='font-size: 12px;'><b>"+(pos2+1)+"</b>: "+def2+"</td></tr>";
+                    $("#tbody-relacion").append(html);
+                }
+                $options.attr("finish", 1).addClass("ui-state-highlight");
+                $(this).hide(200);
+                return false;
+            }
+	
+	
+            $(function(){
+                var i = 0;
+                for(i = 0; i < aTerminosS.length; i++){
+                    aTerminos.push(aTerminosS[i]);
+                }
+                for(i = 0; i < aDefinicionesS.length; i++){
+                    aDefiniciones.push(aDefinicionesS[i]);
+                }
+                aTerminos.shuffle();
+                aDefiniciones.shuffle();
+                for(i = 0; i < aTerminos.length; i++){
+                    $("#contTerminos").append('<div class="option bloque1">'+aTerminos[i]+'</div>');
+                }
+                for(i = 0; i < aDefiniciones.length; i++){
+                    $("#contDefiniciones").append('<div class="option bloque2" title="'+aDefiniciones[i]+'">'+(i+1)+'</div>');
+                }
+		
+                $(".option").button().attr("is_active", 0)
+                .click(clickeoOption)
+                .hover(
+                function(){
+                    this.setAttribute("is_active", $(this).hasClass("ui-state-active")*1);
+                }, 
+                function(){
+                    if(this.getAttribute("is_active") == 1) 
+                        $(this).addClass("ui-state-active");
+                    this.setAttribute("is_active", 0);
+                });
+                $(".option > span").hide();
+                $("#detalles").hide();
+                $("#btnsolucion").click(verSolucion);
+            });	
+        </script>
+        <style type="text/css">
+            *::-moz-selection{
+                background-color: transparent !important;
+            }
+            *::selection{
+                background-color: transparent !important;
+            }
+            .borderMore{
+                border-width: 2px;
+            }
+            .option{
+                width: 130px;
+                height: 40px;
+                float: left;
+                margin: 1px;
+                font-size: 12px;
+                text-align: center;
+            }
+            .oculto{
+                display: none !important;
+            }
+            #contTerminos, #contDefiniciones{
+                width: 540px;
+                padding: 10px;
+                height: 150px;
+            }
+            #detalles{
+                width: 540px;
+                padding: 10px;
+                margin-top: 5px;
+                font-weight: normal !important;
+            }
+            #wrap{
+                width: 960px;
+                margin: 0 auto;
+            }
+            table#cabezote { width:100%; margin-top: 20px; /*background-color: #FFF;*/}
+            #cantOk{
+                font-family: "HelveticaNeue-Light","Helvetica Neue Light","Helvetica Neue",sans-serif;
+                font-size: 24px;
+                font-weight: 200;
+                line-height: 1;
+            }
+        </style>
+    </head>
+    <body>
+        <section id="wrap">
+            <table id='cabezote' class='table table-striped table-bordered table-condensed'>
+                <thead><tr><th colspan=2>Actividad de afianzamiento</th></tr></thead>
+                <tbody>  				                    
+                    <tr><td>Tema</td><td>Dise&ntilde;o de base de datos</td></tr>
+                </tbody>
+            </table>
+            <p><strong>Concentrese!</strong> <em>Seleccione a la vez un par de cuadros. Elija un término técnico y un concepto.</em></p>
+            <table style="width: 100%;">
+                <tr>
+                    <td style="width: 60%; vertical-align: top;">
+                        <div id="contTerminos" class="ui-widget-content ui-corner-all">
+                            <div style="width: 100%; font-weight:bold;">Términos Técnicos</div>
+                        </div>
+                        <br/><br/>
+                        <div id="contDefiniciones" class="ui-widget-content ui-corner-all">
+                            <div style="width: 100%; font-weight:bold;">Conceptos</div>
+                        </div>
+                        <div id="detalles" class="ui-state-hover ui-corner-all"></div>
+                    </td>
+                    <td style="width: 40%; text-align: center; vertical-align: top;">
+                        <div style="margin-bottom: 10px;">Cantidad de combinaciones encontradas:<br/>
+                            <span id="cantOk">0</span>
+                        </div>
+                        <button id="btnsolucion" style="margin-bottom: 2px; display: inline-block;" class="btn btn-primary btn-large">Ver Solución</button><br/>
+                        <form>
+                            <input type="submit" id="btnsubmit" class="btn btn-danger btn-small" style="display: inline-block;" value="Reiniciar la actividad?"/>
+                        </form>
+                        <table class='table table-striped table-bordered table-condensed' style="margin-top: 10px;">
+                            <thead><tr><th colspan="2">Relación de Terminos - Conceptos</th></tr></thead>
+                            <tbody id="tbody-relacion">  				
+                                <tr><td colspan="2">No ha seleccionado combinaciones</td></tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </section>
+    </body>
+</html>
