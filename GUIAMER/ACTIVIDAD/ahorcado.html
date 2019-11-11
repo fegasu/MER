@@ -1,0 +1,365 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0047)http://www.uv.es/~jac/guia/jscript/palabras.htm -->
+<HTML><head>
+<script type="text/javascript" src="http://aprendeenlinea.udea.edu.co/lms/moodle/lib/ufo.js"></script>
+<link rel="stylesheet" type="text/css" href="http://aprendeenlinea.udea.edu.co/lms/moodle/theme/standard/styles.php" />
+<link rel="stylesheet" type="text/css" href="http://aprendeenlinea.udea.edu.co/lms/moodle/theme/aprendeenlinea/styles.php" />
+<TITLE>JUEGO DEL AHORCADO</TITLE>
+<META http-equiv=Content-Type content="text/html; charset=windows-1252">
+<SCRIPT language=JavaScript>
+var hombre = new Array("___\n", "   |\n", "   O\n", "  /", "|", "\\\n", "  /", " \\\n", "___")
+var palabra
+var libreriaPalabras = new Array("t u p l a", "g r a d o", "p r i m a r i a", "", "f u e r t e",
+"f o r a n e a", "a t r i b u t o", "p r i m o", "d o m i n i o", "e n t i d a d",
+"m e r", "d e b i l", "s q l")
+var partes = 0
+var colNueva = 0
+var jugando
+
+
+function ObtienePalabra() {
+   //obtiene la palabra para jugar de forma pseudoaleatoria
+   var indice = Math.round ( Math.random() * (libreriaPalabras.length-1) )
+   while(indice<0)
+   Math.round ( Math.random() * (libreriaPalabras.length-1) )
+   
+   //alert(indice)
+   var cadena = new String( libreriaPalabras[indice] )
+   palabra = cadena.split(" ")
+}
+
+
+function DibujaHombre(visor, partes) {
+   //dibuja el hombre ahorcado
+   //partes indica el numero de partes a dibujar
+   var dibujo = ""
+   if (partes < 10)
+      for(var x = 0; x < partes; x++) {
+         dibujo += hombre[x]
+      }
+   visor.displayHombre.value = dibujo
+}
+
+
+function DibujaLetra(visor, letra) {
+   //dibuja una letra de la palabra
+   //posicion indica donde debe dibujar la letra
+   var flag = false 
+   //indica si se encontro la letra 
+   //obtiene cadena actual
+   var cadena = new String(visor.displayPalabra.value)
+   //la separa en sus espacios
+   var letrasCadena = cadena.split(" ")
+   cadena = "" 
+   for (var x = 0; x < palabra.length; x++) {
+      if (palabra[x] == letra) {
+         cadena += letra + " "
+         flag = true
+      } else
+         cadena += letrasCadena[x] + " "
+   }
+   visor.displayPalabra.value = cadena
+   return flag
+}
+
+
+function NuevaLetra(visor, letra) {
+   //añade letra lista de letras
+   visor.displayLetras.value += letra + " "
+   //comprueba si ha de pasar a la siguiente fila
+   if(colNueva == 3) {
+      visor.displayLetras.value += "\n"
+      colNueva = 0
+   } else
+      colNueva++
+}
+
+
+function Juega(visor, letra) {
+   //comprueba si esta jugando
+   if (jugando) {
+      //ciclo de jugada
+      //1. añade letra a la lista
+      NuevaLetra(visor, letra)
+      //2. dibuja la letra y comprueba si acierto
+      var acierto = DibujaLetra(visor, letra)
+      //3. si no acierto, dibuja hombre
+      if (!acierto)
+         DibujaHombre(visor, ++partes)
+      //4. comprueba si fin
+      if (partes == 9)
+         FinJuego(false)
+      else if (CompruebaPalabra(visor))
+         FinJuego(true)
+      } else {
+         alert('Pulsa Juego nuevo para comenzar\nuna partida nueva.')
+   }
+}
+
+function IniciaJuego(visor) {
+   //inicializa visor y variables globales
+   jugando = true
+   partes = 0
+   colNueva = 0
+   ObtienePalabra()
+   DibujaHombre(visor, partes)
+   visor.displayPalabra.value = ""
+   for (var x = 0; x < palabra.length; x++)
+      visor.displayPalabra.value += "_ "
+   visor.displayLetras.value = ""
+}
+
+function CompruebaPalabra(visor) {
+   //comprueba si se completo toda la palabra
+   var fin = true
+   //obtiene cadena actual
+   var cadena = new String(visor.displayPalabra.value)
+   //la separa en sus espacios
+   var letrasCadena = cadena.split(" ")
+   for(var x = 0; x < letrasCadena.length; x++)
+      if (letrasCadena[x] == "_")
+         fin = false
+   return fin
+}
+
+
+function FinJuego(resultado) {
+   //indica que si se ha perdido o ganado
+   var solucion = ""
+   jugando = false 
+   if (resultado) {
+      document.visor.ganadas.value++
+      alert("Acertaste !")
+   } else {
+     document.visor.perdidas.value++
+     //construye la palabra solucion
+     for (var x = 0; x < palabra.length; x++)
+        solucion += palabra[x]
+     alert("Has muerto !\n La palabra era: " + solucion)
+   }
+}
+</SCRIPT>
+
+<META content="MSHTML 6.00.2900.2802" name=GENERATOR><!-- BeginNavBarHeaderCodeInsertedByMasher -->
+<style type="text/css">
+
+
+
+div.NavButtonBar{
+	background-color: #000000;
+	text-align: center;
+	margin: 2px 0px 2px 0px;
+	clear: both;
+	font-size: 100%;
+}
+
+.NavButton {
+	border-style: solid;
+	
+	border-left-color: #7f7f7f;
+	border-top-color: #7f7f7f;
+	border-right-color: #000000;
+	border-bottom-color: #000000;
+	background-color: #000000;
+	color: #ffffff;
+
+	border-width: 2px;
+	cursor: pointer;	
+}
+
+.NavButtonUp {
+	border-style: solid;
+
+	border-left-color: #7f7f7f;
+	border-top-color: #7f7f7f;
+	border-right-color: #000000;
+	border-bottom-color: #000000;
+	color: #000000;
+	background-color: #ffffff;
+
+	border-width: 2px;
+	cursor: pointer;	
+}
+
+.NavButtonDown {
+	border-style: solid;
+
+	border-left-color: #000000;
+	border-top-color: #000000;
+	border-right-color: #7f7f7f;
+	border-bottom-color: #7f7f7f;
+	color: #000000;
+	background-color: #ffffff;
+
+	border-width: 2px;
+	cursor: pointer;	
+}
+
+
+
+</style>
+
+<script type="text/javascript">
+//<![CDATA[
+<!--
+
+
+function NavBtnOver(Btn){
+	if (Btn.className != 'NavButtonDown'){Btn.className = 'NavButtonUp';}
+}
+
+function NavBtnOut(Btn){
+	Btn.className = 'NavButton';
+}
+
+function NavBtnDown(Btn){
+	Btn.className = 'NavButtonDown';
+}
+//
+
+//-->
+//]]>
+</script>
+<!-- EndNavBarHeaderCodeInsertedByMasher --></HEAD>
+<BODY>
+
+
+
+<!-- BeginNavBarInsertedByMasher -->
+
+<!-- BeginRepeatCode -->
+<div class="NavButtonBar" id="TopNavBar">
+
+
+<button class="NavButton" onfocus="NavBtnOver(this)" onblur="NavBtnOut(this)" onmouseover="NavBtnOver(this)" onmouseout="NavBtnOut(this)" onmousedown="NavBtnDown(this)" onmouseup="NavBtnOut(this)" onclick="history.back(); return false;">&#x003C;=</button>
+
+
+
+<button class="NavButton" onfocus="NavBtnOver(this)" onblur="NavBtnOut(this)"  onmouseover="NavBtnOver(this)" onmouseout="NavBtnOut(this)" onmousedown="NavBtnDown(this)" onmouseup="NavBtnOut(this)" onclick="location='index.htm'; return false;"> Index </button>
+
+
+
+<button class="NavButton" onfocus="NavBtnOver(this)" onblur="NavBtnOut(this)" onmouseover="NavBtnOver(this)" onmouseout="NavBtnOut(this)" onmousedown="NavBtnDown(this)" onmouseup="NavBtnOut(this)" onclick="location='index.htm'; return false;">=&#x003E;</button>
+
+
+</div>
+
+<!-- EndRepeatCode -->
+
+<!-- EndNavBarInsertedByMasher -->
+
+
+
+
+
+
+
+
+
+
+
+<H2>Juego del ahorcado</H2>
+<FORM name=visor>
+<CENTER>
+<TABLE width=547>
+  <TBODY>
+  <TR>
+    <TD align=middle width=150 colSpan=3><TEXTAREA name=displayHombre rows=6 cols=15></TEXTAREA> 
+    <TD align=middle width=150 colSpan=3><TEXTAREA name=displayLetras rows=6 cols=15></TEXTAREA> 
+    <TD width=200>
+  <TR>
+    <TD align=middle width=300 colSpan=6><INPUT size=42 name=displayPalabra> 
+    <TD align=middle>&nbsp; 
+  <TR>
+    <TD align=middle width=50><INPUT onclick="Juega(this.form, 'a')" type=button value=" A " name=botA> 
+
+    <TD align=middle width=50><INPUT onclick="Juega(this.form, 'b')" type=button value=" B " name=botB> 
+
+    <TD align=middle width=50><INPUT onclick="Juega(this.form, 'c')" type=button value=" C " name=botC> 
+
+    <TD align=middle width=50><INPUT onclick="Juega(this.form, 'd')" type=button value=" D " name=botD> 
+
+    <TD align=middle width=50><INPUT onclick="Juega(this.form, 'e')" type=button value=" E " name=botE> 
+
+    <TD align=middle width=50><INPUT onclick="Juega(this.form, 'f')" type=button value=" F " name=botF> 
+
+    <TD>
+  <TR>
+    <TD align=middle><INPUT onclick="Juega(this.form, 'g')" type=button value=" G " name=botG> 
+
+    <TD align=middle><INPUT onclick="Juega(this.form, 'h')" type=button value=" H " name=botH> 
+
+    <TD align=middle><INPUT onclick="Juega(this.form, 'i')" type=button value=" I " name=botI> 
+
+    <TD align=middle><INPUT onclick="Juega(this.form, 'j')" type=button value=" J " name=botJ> 
+
+    <TD align=middle><INPUT onclick="Juega(this.form, 'k')" type=button value=" K " name=botK> 
+
+    <TD align=middle><INPUT onclick="Juega(this.form, 'l')" type=button value=" L " name=botL> 
+
+    <TD vAlign=center align=right>Ganadas: <INPUT size=4 value=0 name=ganadas> 
+
+  <TR>
+    <TD align=middle><INPUT onclick="Juega(this.form, 'm')" type=button value=" M " name=botM> 
+
+    <TD align=middle><INPUT onclick="Juega(this.form, 'n')" type=button value=" N " name=botN> 
+
+    <TD align=middle><INPUT onclick="Juega(this.form, 'ñ')" type=button value=" Ñ " name=botÑ> 
+
+    <TD align=middle><INPUT onclick="Juega(this.form, 'o')" type=button value=" O " name=botO> 
+
+    <TD align=middle><INPUT onclick="Juega(this.form, 'p')" type=button value=" P " name=botP> 
+
+    <TD align=middle><INPUT onclick="Juega(this.form, 'q')" type=button value=" Q " name=botQ> 
+
+    <TD vAlign=center align=right>Perdidas: <INPUT size=4 value=0 
+      name=perdidas> 
+  <TR>
+    <TD align=middle><INPUT onclick="Juega(this.form, 'r')" type=button value=" R " name=botR> 
+
+    <TD align=middle><INPUT onclick="Juega(this.form, 's')" type=button value=" S " name=botS> 
+
+    <TD align=middle><INPUT onclick="Juega(this.form, 't')" type=button value=" T " name=botT> 
+
+    <TD align=middle><INPUT onclick="Juega(this.form, 'u')" type=button value=" U " name=botU> 
+
+    <TD align=middle><INPUT onclick="Juega(this.form, 'v')" type=button value=" V " name=botV> 
+
+    <TD align=middle><INPUT onclick="Juega(this.form, 'w')" type=button value=" W " name=botW> 
+
+    <TD>
+  <TR>
+    <TD align=middle><INPUT onclick="Juega(this.form, 'x')" type=button value=" X " name=botX> 
+
+    <TD align=middle><INPUT onclick="Juega(this.form, 'y')" type=button value=" Y " name=botY> 
+
+    <TD align=middle><INPUT onclick="Juega(this.form, 'z')" type=button value=" Z " name=botZ> 
+
+    <TD align=middle colSpan=3><INPUT onclick=IniciaJuego(this.form) type=button value="  Juego nuevo   " name=Inicia> 
+
+    <TD align=middle><INPUT onclick="this.form.ganadas.value='0'; this.form.perdidas.value='0'" type=button value=Limpiar name=B1> 
+  </TR></TBODY></TABLE></CENTER></FORM>
+<HR>
+
+<CENTER>
+<H3><A href="javascript:history.back()">Volver</A> 
+</H3></CENTER><!-- BeginNavBarInsertedByMasher -->
+<div class="NavButtonBar" id="BottomNavBar">
+
+
+<button class="NavButton" onfocus="NavBtnOver(this)" onblur="NavBtnOut(this)" onmouseover="NavBtnOver(this)" onmouseout="NavBtnOut(this)" onmousedown="NavBtnDown(this)" onmouseup="NavBtnOut(this)" onclick="history.back(); return false;">&#x003C;=</button>
+
+
+
+<button class="NavButton" onfocus="NavBtnOver(this)" onblur="NavBtnOut(this)"  onmouseover="NavBtnOver(this)" onmouseout="NavBtnOut(this)" onmousedown="NavBtnDown(this)" onmouseup="NavBtnOut(this)" onclick="location='index.htm'; return false;"> Index </button>
+
+
+
+<button class="NavButton" onfocus="NavBtnOver(this)" onblur="NavBtnOut(this)" onmouseover="NavBtnOver(this)" onmouseout="NavBtnOut(this)" onmousedown="NavBtnDown(this)" onmouseup="NavBtnOut(this)" onclick="location='index.htm'; return false;">=&#x003E;</button>
+
+
+</div>
+
+<!-- EndNavBarInsertedByMasher --></BODY></HTML>
+ 
